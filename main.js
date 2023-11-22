@@ -20,8 +20,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const isComplete = document.getElementById("inputBookIsComplete").checked;
 
     // Menyimpan semua data dalam objek array
-    const generatedID = generateId();
-    const book = generateTodoObject(generatedID, title, author, year, isComplete);
+    // const generatedID = generateId();
+    // const book = generateTodoObject(generatedID, title, author, year, isComplete);
+    
+     // Membuat objek buku baru
+    const book = {
+      id: generateId(), // Memanggil fungsi untuk menghasilkan ID unik
+      title: title,
+      author: author,
+      year: year, 
+      isComplete: isComplete,
+    };
+
+    
     books.push(book);
    
     document.dispatchEvent(new Event(RENDER_EVENT));
@@ -30,27 +41,26 @@ document.addEventListener('DOMContentLoaded', function () {
   function generateId() {
     return +new Date();
   }
-   
-  function generateTodoObject(id, title, author,year, isCompleted) {
-    return {
-      id,
-      title,
-      author,
-      year,
-      isCompleted
-    }
-  }
 
 //   Mengirim data dengan cunstome event 'RENDER_EVENT'
   document.addEventListener(RENDER_EVENT, function () {
     console.log(books);
 
-    const incompleteBookshelfList = document.getElementById('incompleteBookshelfList');
-    incompleteBookshelfList.innerHTML = '';
+ // Mendapatkan elemen daftar buku belum selesai dan selesai
+  const incompleteBookshelf = document.getElementById("incompleteBookshelfList");
+  const completeBookshelf = document.getElementById("completeBookshelfList");
+
+  // Mengosongkan elemen daftar buku
+  incompleteBookshelf.innerHTML = "";
+  completeBookshelf.innerHTML = "";
     
     for (const bookItem of books) {
         const bookElement = makeTodo(bookItem);
-        incompleteBookshelfList.append(bookElement);
+        if (bookItem.isComplete) {
+          completeBookshelf.appendChild(bookElement);
+        } else {
+          incompleteBookshelf.appendChild(bookElement);
+        }
     }
      });
 
@@ -76,7 +86,7 @@ function makeTodo(book) {
 
   const actionButton = document.createElement("button");
   actionButton.innerText = book.isComplete
-    ? "Belum selesai di Baca"
+    ? "Belum selesai dibaca"
     : "Selesai dibaca";
   actionButton.classList.add(book.isComplete ? "green" : "red");
   actionButton.addEventListener("click", function () {
@@ -99,22 +109,4 @@ function makeTodo(book) {
   bookItem.appendChild(actionDiv);
 
   return bookItem;
-  }
-// function makeTodo(todoObject) {
-//     const textTitle = document.createElement('h2');
-//     textTitle.innerText = todoObject.title;
-   
-//     const textTimestamp = document.createElement('p');
-//     textTimestamp.innerText = todoObject.author;
-   
-//     const textContainer = document.createElement('div');
-//     textContainer.classList.add('inner');
-//     textContainer.append(textTitle, textTimestamp);
-   
-//     const container = document.createElement('div');
-//     container.classList.add('item', 'shadow');
-//     container.append(textContainer);
-//     container.setAttribute('id', `todo-${todoObject.id}`);
-   
-//     return container;
-//   }
+  } 
